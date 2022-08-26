@@ -1,22 +1,23 @@
-# Jesse Project Template
+# Zoe - ChicagoDAO
 
-This is template from which you can create your own Jesse project. 
+This is an algorithmic strategy designed for the FTX US trading competition. It contains a mean reversion and a trend following strategies.
 
-## Usage
-Assuming that you already have installed the environment dependencies, you can run the following command to create your project:
+## Mean Reversion
+When it is "ON" -> When the market is trading within the prior days value area and we have spent less than 10 minutes outside 1 standard deviation of VWAP.
 
-```sh
-# you can change "my-project" to any name you want
-git clone https://github.com/jesse-ai/project-template.git my-project
-# to create a .env file of yours
-cp .env.example .env
-```
+This looks for price to hit extremes of VWAP/VA and then fade them back to intraday value. 
 
-Then while in the project run:
+## Trend Following
+This strategy uses Daily VWAP with prior days Value Area to determine a market in trend. Here we look to take a biased position and go with strength.
+
+
+## To Run
+
+Install Jessee depenencies and Docker.
 
 ```sh
 cd docker
 docker-compose up
 ```
 
-That's it! Now open [localhost:9000](http://localhost:9000) in your browser to see the dashboard. 
+Open [localhost:9000](http://localhost:9000) in your browser to see the dashboard. 
