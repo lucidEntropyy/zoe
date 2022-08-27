@@ -7,7 +7,7 @@ class Zoe(Strategy):
     @property
     def vwap(self):
         # VWAP + Standard Dev's
-        return ta.vwap(self.candles)
+       # return ta.vwap(candles: np.ndarray, source_type: str = "hlc3", anchor: str = "D", sequential: bool = False) -> Union[float, np.ndarray]
 
     def pva(self):
         # Prior Value Area
