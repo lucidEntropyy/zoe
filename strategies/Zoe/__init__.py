@@ -2,32 +2,37 @@ from jesse.strategies import Strategy
 import jesse.indicators as ta
 from jesse import utils
 from jesse.helpers import get_candle_source, slice_candles
+from datetime import *
 
 class Zoe(Strategy):
+
     @property
     def vwap(self):
-        # VWAP + Standard Dev's
-       # return ta.vwap(candles: np.ndarray, source_type: str = "hlc3", anchor: str = "D", sequential: bool = False) -> Union[float, np.ndarray]
+        return ta.vwap(self.candles, source_type="hl2", anchor='D')
 
-    def pva(self):
-        # Prior Value Area
-        candles = slice_candles(candles)
-        src = get_candle_source(candles)
-        ## TODO CALCULATE
-
-    def filter_trend(self):
-        # Only opens a long position when close is above ichimoku cloud
-        return self.close > self.ichimoku.span_a and self.close > self.ichimoku.span_b
-
-    def filters(self):
-        return [self.filter_trend]
+    @property
+    def slow_sma(self):
+        return ta.sma(self.candles, 200)
 
     def should_long(self) -> bool:
-        # Go long if candle closes above upperband
-        return self.close > self.bb[0]
+        # Go long if candle close > vwap
+        if self.vwap is None:
+            return
 
-    def should_short(self) -> bool:
-        return False
+        return self.close > self.vwap and self.close > self.slow_sma
+
+    #def should_short(self) -> bool:
+    #    return False
+
+    def timeOfDay(self):
+        timestamp = self.current_candle[0]/1000
+        time = datetime.fromtimestamp(timestamp)
+        return time.hour > 4 and time.hour < 23
+
+    def filters(self):
+        return [
+            self.timeOfDay
+        ]
 
     def should_cancel_entry(self) -> bool:
         return True
@@ -41,6 +46,14 @@ class Zoe(Strategy):
         pass
 
     def update_position(self):
-        # Close the position when candle closes below middleband
-        if self.close < self.bb[1]:
+        timestamp = self.current_candle[0]/1000
+        time = datetime.fromtimestamp(timestamp)
+
+        if self.vwap is None:
+            return
+
+        if self.close < self.vwap and self.close < self.slow_sma:
+            self.liquidate()
+
+        if time.hour == 23:
             self.liquidate()

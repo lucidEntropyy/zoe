@@ -3,6 +3,7 @@
 /.vscode
 /jesse.egg-info
 /.idea
+/storage/logs
 /storage/*.key
 /storage/*.sqlite
 /storage/*.gz
